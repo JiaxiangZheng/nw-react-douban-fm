@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>db.fm</title>
+    <style>
+        body {
+            transition: background-color 1s;
+        }
+        button {
+            margin: 0 5px;
+        }
+    </style>
+</head>
+<body>
+    <main id="main"></main>
+
+    <!--
+	<div id="bar">
+		<h1 id="app">Douban.FM</h1>
+	</div>
+    <div class="close" onclick="window.close();return true;">&times;</div>
+	<iframe  frameborder="0" id="iframe" style="display: none;"></iframe>
+	<div id="poster">
+        <img src="" alt="">
+	</div>
+	<div id="right">
+		<h2 id="title">Waiting...</h2>
+		<h3 id="artist">To the Response</h3>
+		<h4 id="album">From Server</h4>
+		<div id="current_progress">
+			<div id="vol">
+				<div id="vol_bar">
+					<div id="vol_bar_in"></div>
+				</div>
+				<div id="vol_block"></div>
+			</div>
+			<div id="timer">-03:40</div>
+			<div id="progress">
+				<div id="status" style="width: 0"></div>
+			</div>
+		</div>
+        <audio id="fm-audio" controls="controls" src="http://mr3.douban.com/201502051256/63b71b28f992d0fa885aa34d6ea5d357/view/song/small/p1023196.mp3"></audio>
+		<div id="controller">
+			<div id="fave"></div>
+			<div id="trash"></div>
+			<div id="pause"></div>
+			<div id="next"></div>
+		</div>
+		<div id="loginform">
+			<h3 id="user_name">未登录</h3>
+			<label for="email">邮箱:</label><input type="email" id="email" placeholder="Email:">
+			<br/>
+			<label for="password">密码:</label><input type="password" id="password" placeholder="Password">
+			<div id='login'>登录</div>
+			<div id='cancel'>取消</div>
+		</div>
+	</div>
+    -->
+
+	<script src="lib/jquery.min.js"></script>
+	<script src="lib/react.js"></script>
+	<script src="lib/JSXTransformer.js"></script>
+    <script type="text/jsx">
+        var querystring = require('querystring'),
+            _ = require('lodash');
+
+        var LoginForm = React.createClass({
+            handleSubmit: function (e) {
+                e.preventDefault();
+                var email = React.findDOMNode(this.refs.usr).value.trim();
+                var password = React.findDOMNode(this.refs.pwd).value.trim();
+                if (!email || !password) {
+                    return
+                }
+                this.props.onSubmit(email, password);
+                React.findDOMNode(this.refs.usr).value = '';
+                React.findDOMNode(this.refs.pwd).value = '';
+            },
+            render: function () {
+                return (
+                    <form className="login-form" onSubmit={this.handleSubmit}>
+                        <label htmlFor="email">用户名</label>
+                        <input type="text" id="email" ref="usr" />
+                        <br />
+                        <label htmlFor="password">密码</label>
+                        <input type="password" id="password" ref="pwd" />
+                        <br />
+                        <input type="submit" value="提交" />
+                    </form>
+                );
+            }
+        });
+
+        var Player = React.createClass({
+            getInitialState: function () {
+                return {
+                    index: 0,
+                    length: 0,
+                    songs: []
+                }
+            },
+            componentDidMount: function() {
+                this.refresh();
+            },
+            render: function () {
+                var index = this.state.index,
+                    song = this.state.songs[index];
+
+                // TODO: 支持audio自动播放下一曲
+                return (
+                    <div className="player">
+                        <audio controls autoplay className="audio-player" src={song ? song.url : ''}>
+                        </audio>
+                        <br />
+                        <button onClick={this.prev}>Prev</button>
+                        <button onClick={this.next}>Next</button>
+                    </div>
+                );
+            },
+            refresh: function () {
+                var me = this;
+                var data = {
+                    app_name: 'radio_desktop_win',
+                    version: 100,
+                    type: 'n',
+                    channel: -3,
+                    user_id: this.props.id,
+                    expire: this.props.expire,
+                    token: this.props.token,
+                    channel: -3     // 红心频道
+                };
+                $.ajax({
+                    url: 'http://www.douban.com/j/app/radio/people?' + querystring.stringify(data),
+                    method: 'GET',
+                    dataType: 'json'
+                }).then(function (response) {
+                    me.setState({
+                        index: 0,
+                        length: response.song.length,
+                        songs: response.song
+                    });
+                });
+            },
+            next: function () {
+                var index = this.state.index;
+                index += 1;
+                if (index === this.state.length) {
+                    this.refresh();
+                } else {
+                    this.setState({
+                        index: index
+                    });
+                }
+            },
+            prev: function () {
+                var index = this.state.index;
+                index -= 1;
+                if (index === -1) {
+                    this.refresh();
+                } else {
+                    this.setState({
+                        index: index
+                    });
+                }
+            },
+            pause: function () {
+            },
+            album: function () {
+            }
+        });
+
+        var App = React.createClass({
+            getInitialState: function () {
+                return {
+                };
+            },
+            login: function (email, password) {
+                var me = this;
+                $.ajax({
+                    url: 'http://www.douban.com/j/app/login',
+                    type: 'POST',
+                    data: {
+                        app_name: 'radio_desktop_win',
+                        version: 100,
+                        email: email,
+                        password: password 
+                    },
+                    dataType: 'json'
+                }).then(function (response) {
+                    var defer = $.Deferred()
+                    if (!response || response.r !== 0) {
+                        var err = response ? response.err : "unable to get the auth data";
+                        defer.reject(new Error(err));
+                    } else {
+                        defer.resolve(response)
+                    }
+                    return defer.promise();
+                }).then(function (user_info) {
+                    me.setState({
+                        email: email,
+                        password: password,
+                        token: user_info.token,
+                        id: user_info.user_id,
+                        expire: user_info.expire,
+                        username: user_info.user_name
+                    });
+                    localStorage.setItem('userInfo', JSON.stringify(me.state));
+                }, function (err) {
+                    alert(err);
+                });
+            },
+
+            componentDidMount: function() {
+                var user = JSON.parse(localStorage.getItem('userInfo'));
+                if (user && user.email && user.password) {
+                    this.login('jiaxiang.zheng135@gmail.com', 'ZhengJX135@DOUBAN');
+                }
+            },
+
+            render: function () {
+                var loginForm;
+                if (this.state.email && this.state.password) {
+                    loginForm = <LoginForm onSubmit={this.login}/>;
+                }
+                return (
+                    <div className="db-app">
+                        <h3>{this.props.title}</h3>
+                        {
+                            !(this.state.email && this.state.password) ? (
+                                <LoginForm onSubmit={this.login}/>
+                            ) : <Player {...{
+                                    email: this.state.email,
+                                    password: this.state.password,
+                                    token: this.state.token,
+                                    id: this.state.id,
+                                    expire: this.state.expire,
+                                    username: this.state.username
+                                }}/>
+                        }
+                    </div>
+                )
+            }
+        });
+        React.render(<App title={"React-DB-App"} />, document.getElementById('main'));
+    </script>
+
+    <script>
+		document.addEventListener("keyup",function(e){
+		    if(e.keyIdentifier=="F12"){
+		        console.log('Show DevTool');
+		        require('nw.gui').Window.get().showDevTools();
+		    }
+		});
+
+    </script>
+</body>
+</html>

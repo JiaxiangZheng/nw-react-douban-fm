@@ -1,0 +1,31 @@
+{
+  "name": "db-fm",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node app.js"
+  },
+  "dependencies": {
+    "async": "*",
+    "lodash": "^3.7.0"
+  },
+  "readmeFilename": "README.md",
+  "description": "a simple douban FM",
+  "main": "index.html",
+  "webkit": {
+    "plugin": true
+  },
+  "devDependencies": {},
+  "keywords": [
+    "douban.fm"
+  ],
+  "author": "Jiaxiang Zheng",
+  "license": "MIT",
+  "window": {
+    "icon": "fm.ico",
+    "width": 585,
+    "toolbar": false,
+    "height": 290,
+    "transparent": true
+  }
+}
