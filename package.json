@@ -23,9 +23,9 @@
   "license": "MIT",
   "window": {
     "icon": "fm.ico",
-    "width": 585,
+    "width": 600,
     "toolbar": false,
-    "height": 290,
+    "height": 300,
     "transparent": true
   }
 }

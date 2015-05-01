@@ -14,15 +14,21 @@
         button {
             margin: 0 5px;
         }
-
         .player {
-            display: flex;
+            position: relative;
+            width: 600px;
         }
-        .album-img {
-            width: 300px;
-            height: 300px;
+        .player .album-img {
+            position: absolute;
+            top: 0;
+            left: 0;
         }
-        .controller {
+        .player .wrapper {
+            position: absolute;
+            top: 0;
+            left: 300px;
+        }
+        .player .wrapper, .album-img {
             width: 300px;
             height: 300px;
         }
@@ -34,6 +40,16 @@
         }
         .controller span {
             margin: 5px;
+        }
+        .wrap {
+            position: absolute;
+            width: 100%;
+            bottom: 10px;
+            left: 0;
+        }
+
+        h2 a:link, h2 a:hover {
+            text-decoration: none;
         }
     </style>
 </head>
@@ -90,7 +106,7 @@
     </script>
 
     <script>
-		document.addEventListener("keyup",function(e){
+		document.addEventListener("keyup",function(e) {
 		    if(e.keyIdentifier=="F12"){
 		        console.log('Show DevTool');
 		        require('nw.gui').Window.get().showDevTools();

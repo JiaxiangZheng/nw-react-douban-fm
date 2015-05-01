@@ -55,7 +55,6 @@ var App = React.createClass({
     render: function () {
         return (
             <div className="db-app">
-                <h3>{this.props.title}</h3>
                 {
                     !(this.state.email && this.state.password) ? (
                         <LoginForm onSubmit={this.login}/>
