@@ -39,6 +39,7 @@ var AudioPlayer = React.createClass({
     }
 });
 
+
 var songs = function songs(data) {
     var defer = $.Deferred();
 
@@ -55,8 +56,7 @@ var songs = function songs(data) {
     }).fail(defer.reject);
 
     return defer.promise();
-}
-
+};
 
 var Player = React.createClass({
     getInitialState: function () {
@@ -70,6 +70,15 @@ var Player = React.createClass({
     // 插入真实的DOM以后调用
     componentDidMount: function() {
         this.refresh();
+    },
+
+    componentDidUpdate: function () {
+        var song = this.state.songs[this.state.index];
+        if (!song) {
+            return;
+        }
+        var className = song.like === 1 ? "glyphicon glyphicon-heart" : "glyphicon glyphicon-heart-empty";
+        React.findDOMNode(this.refs.like).className =  className;
     },
 
     render: function () {
