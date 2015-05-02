@@ -11,18 +11,41 @@
             padding: 0;
             transition: background-color 1s;
         }
+        
+        .login-form {
+            width: 50%;
+            margin: 0 auto;
+        }
         button {
             margin: 0 5px;
         }
         .player {
             position: relative;
             width: 600px;
+            /*overflow: hidden;*/
         }
         .player .album-img {
             position: absolute;
             top: 0;
             left: 0;
+            border-radius: 50%;
+            box-shadow: 0 0 10px blue;
         }
+                /* Chrome, Safari, Opera */
+        @-webkit-keyframes rotation {
+            0%   {transform: rotate(0deg);}
+            100% {transform: rotate(360deg);}
+        }
+        @keyframes rotation {
+            0%   {transform: rotate(0deg);}
+            100% {transform: rotate(360deg);}
+        }
+
+        .album-img.animate {
+            /*transform: rotate(30deg);*/
+            -webkit-animation: rotation 30s linear infinite;
+        }
+
         .player .wrapper {
             position: absolute;
             top: 0;
@@ -34,6 +57,9 @@
         }
         .glyphicon {
             font-size: 25px;
+        }
+        .glyphicon:hover {
+            cursor: pointer;
         }
         .glyphicon-heart {
             color: red;
@@ -55,43 +81,6 @@
 </head>
 <body>
     <main id="main"></main>
-
-    <!--
-	<div id="bar">
-		<h1 id="app">Douban.FM</h1>
-	</div>
-    <div class="close" onclick="window.close();return true;">&times;</div>
-	<iframe  frameborder="0" id="iframe" style="display: none;"></iframe>
-	<div id="poster">
-        <img src="" alt="">
-	</div>
-	<div id="right">
-		<h2 id="title">Waiting...</h2>
-		<h3 id="artist">To the Response</h3>
-		<h4 id="album">From Server</h4>
-		<div id="current_progress">
-			<div id="vol">
-				<div id="vol_bar">
-					<div id="vol_bar_in"></div>
-				</div>
-				<div id="vol_block"></div>
-			</div>
-			<div id="timer">-03:40</div>
-			<div id="progress">
-				<div id="status" style="width: 0"></div>
-			</div>
-		</div>
-        <audio id="fm-audio" controls="controls" src="http://mr3.douban.com/201502051256/63b71b28f992d0fa885aa34d6ea5d357/view/song/small/p1023196.mp3"></audio>
-		<div id="loginform">
-			<h3 id="user_name">未登录</h3>
-			<label for="email">邮箱:</label><input type="email" id="email" placeholder="Email:">
-			<br/>
-			<label for="password">密码:</label><input type="password" id="password" placeholder="Password">
-			<div id='login'>登录</div>
-			<div id='cancel'>取消</div>
-		</div>
-	</div>
-    -->
 
 	<script src="lib/jquery.min.js"></script>
 	<script src="lib/react.js"></script>

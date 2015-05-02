@@ -7,6 +7,7 @@ var _ = require('lodash');
 var App = React.createClass({
     getInitialState: function () {
         return {
+            loading: true
         };
     },
     login: function (email, password) {
@@ -37,7 +38,8 @@ var App = React.createClass({
                 token: user_info.token,
                 id: user_info.user_id,
                 expire: user_info.expire,
-                username: user_info.user_name
+                username: user_info.user_name,
+                loading: false
             });
             localStorage.setItem('userInfo', JSON.stringify(me.state));
         }, function (err) {
@@ -48,25 +50,35 @@ var App = React.createClass({
     componentDidMount: function() {
         var user = JSON.parse(localStorage.getItem('userInfo'));
         if (user && user.email && user.password) {
-            this.login('jiaxiang.zheng135@gmail.com', 'ZhengJX135@DOUBAN');
+            this.setState({
+                email: user.email,
+                password: user.password,
+                loading: true
+            });
+            this.login(user.email, user.password);
         }
     },
 
     render: function () {
+        var page = null;
+
+        if (!this.state.email || !this.state.password) { // 显示登陆页面
+            page = <LoginForm onSubmit={this.login} />;
+        } else if (this.state.loading) {    // 显示正在加载
+            page = <div>努力登录中。。。</div>
+        } else {    // 显示播放页
+            page = <Player {...{
+                    email: this.state.email,
+                    password: this.state.password,
+                    token: this.state.token,
+                    id: this.state.id,
+                    expire: this.state.expire,
+                    username: this.state.username
+                }}/>;
+        }
         return (
             <div className="db-app">
-                {
-                    !(this.state.email && this.state.password) ? (
-                        <LoginForm onSubmit={this.login}/>
-                    ) : <Player {...{
-                            email: this.state.email,
-                            password: this.state.password,
-                            token: this.state.token,
-                            id: this.state.id,
-                            expire: this.state.expire,
-                            username: this.state.username
-                        }}/>
-                }
+                {page}
             </div>
         )
     }

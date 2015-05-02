@@ -16,14 +16,25 @@ var LoginForm = React.createClass({
     render: function () {
         return (
             <form className="login-form" onSubmit={this.handleSubmit}>
-                <label htmlFor="email">用户名</label>
-                <input type="text" id="email" ref="usr" />
-                <br />
-                <label htmlFor="password">密码</label>
-                <input type="password" id="password" ref="pwd" />
-                <br />
-                <input type="submit" value="提交" />
+                <div className="form-group">
+                    <label htmlFor="email">用户名</label>
+                    <input className="form-control" type="text" id="email" ref="usr" />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password">密码</label>
+                    <input className="form-control" type="password" id="password" ref="pwd" />
+                </div>
+                <button type="submit" class="btn btn-default">提交</button>
             </form>
+        );
+    }
+});
+
+var LoadingPage = React.createClass({
+
+    render: function () {
+        return (
+            <div className="loading"></div>
         );
     }
 });

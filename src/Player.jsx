@@ -1,6 +1,44 @@
 /** @jsx React.DOM */
 var querystring = require('querystring');
 
+// <AudioPlayer song={} onNext={}/>
+var AudioPlayer = React.createClass({
+    render: function () {
+        var song = this.props.song;
+        if (!song) {
+            return null;
+        }
+
+        return (
+            <div className="hidden">
+                <audio id="audio-player" 
+                    src={song.url} 
+                    controls="true" 
+                    autoPlay="true"
+                    ref="audio"
+                    style={{display: 'none'}}
+                />
+            </div>
+        );
+    },
+    
+    componentDidMount: function () {
+        var audioNode = React.findDOMNode(this.refs.audio);
+        if (audioNode) {
+            audioNode.addEventListener('ended', this.props.onNext);
+            // audioNode.addEventListener('pause', this.props.onPause);
+        }
+    },
+
+    componentWillUnmount: function () {
+        var audioNode = React.findDOMNode(this.refs.audio);
+        if (audioNode) {
+            audioNode.removeEventListener('ended', this.props.onNext);
+            // audioNode.removeEventListener('pause', this.props.onPause);
+        }
+    }
+});
+
 var songs = function songs(data) {
     var defer = $.Deferred();
 
@@ -34,35 +72,49 @@ var Player = React.createClass({
         this.refresh();
     },
 
-    componentDidUpdate: function () {
-        this.play();
-    },
-
     render: function () {
         var index = this.state.index,
             song = this.state.songs[index];
         
         // TODO: 支持audio自动播放下一曲
+        if (!song) return null;
         return (
             <div className="player">
-                <audio id="audio-player" src={song ? song.url : ''} controls="true" autoplay="true" style={{display: 'none'}}/>
+                <AudioPlayer song={song} onNext={this.next} />
 
-                <img className="album-img" src={song ? song.picture : ''} alt={song ? song.title : ''}></img>
+                <img className="album-img animate" src={song.picture} alt={song.title} ref="album"></img>
                 <div className="wrapper">
                     <div className="container">
                         <h2 className="text-center">
-                            <a target="_blank" href={song && song.album ? "http://music.douban.com/" + song.album : "" }>{song && song.title}</a>
+                            <a target="_blank" 
+                                href={"http://music.douban.com/" + song.album}>{song && song.title}
+                            </a>
                         </h2>
                         
-                        <p className="text-center"><strong>{song && song.artist}</strong></p>
+                        <p className="text-center"><strong>{song.artist}</strong></p>
                         <br />
                         <div className="wrap">
                             <div className="controller text-center">
-                                <span id='ctrl-like' className={(song && song.like === 1) ? "glyphicon glyphicon-heart" : "glyphicon glyphicon-heart-empty"} 
-                                    onClick={this.like}></span>
-                                <span id='ctrl-trash' className="glyphicon glyphicon-trash"></span>
-                                <span id='ctrl-pause' className="glyphicon glyphicon-pause" onClick={this.pause}></span>
-                                <span className="glyphicon glyphicon-step-forward" onClick={this.next}></span>
+                                <span ref="like"
+                                    title={(song.like === 1) ? "移除收藏" : "添加收藏"}
+                                    className={(song.like === 1) ? "glyphicon glyphicon-heart" : "glyphicon glyphicon-heart-empty"} 
+                                    onClick={this.like}>
+                                </span>
+                                <span ref='trash'
+                                    className="glyphicon glyphicon-trash"
+                                    title="不再播放"
+                                    onClick={this.trash}>
+                                </span>
+                                <span ref='pause'
+                                    title="暂停/播放"
+                                    className="glyphicon glyphicon-pause" 
+                                    onClick={this.pause}>
+                                </span>
+                                <span ref='next'
+                                    title="下一曲"
+                                    className="glyphicon glyphicon-step-forward" 
+                                    onClick={this.next}>
+                                </span>
                             </div>
                         </div>
                     </div>
@@ -80,7 +132,10 @@ var Player = React.createClass({
 
         var isLike = 1 - me.state.songs[me.state.index].like;
         me.state.songs[me.state.index].like = isLike;
-        $('#ctrl-like')[0].className = isLike === 1 ? "glyphicon glyphicon-heart" : "glyphicon glyphicon-heart-empty";
+
+        React.findDOMNode(this.refs.like).className = 
+            isLike === 1 ? "glyphicon glyphicon-heart" 
+            : "glyphicon glyphicon-heart-empty";
 
         songs({
             app_name: 'radio_desktop_win',
@@ -98,7 +153,25 @@ var Player = React.createClass({
             alert(err);
         });
     },
+    trash: function () {
+        var me = this;
+        var song = this.state.songs[this.state.index];
 
+        songs({
+            app_name: 'radio_desktop_win',
+            version: 100,
+            type: 'b',
+            sid: song.sid,
+            user_id: this.props.id,
+            expire: this.props.expire,
+            token: this.props.token,
+            channel: 1
+        }).then(function (response) {
+            me.next();
+        }, function (err) {
+            alert(err);
+        });
+    },
     refresh: function () {
         var me = this;
         var data = {
@@ -153,19 +226,16 @@ var Player = React.createClass({
         } else {
             node.pause();
             target.className = 'glyphicon glyphicon-play';
+            React.findDOMNode(this.refs.album).className = 'album-img';
         }
     },
     play: function (evt, node) {
         if (!node) {
             node = document.getElementById('audio-player');
         }
-        if (!evt) {
-            evt = {
-                target: document.getElementById('ctrl-pause')
-            };
-        }
         node.play();
-        evt.target.className = 'glyphicon glyphicon-pause';
+        React.findDOMNode(this.refs.pause).className = 'glyphicon glyphicon-pause';
+        React.findDOMNode(this.refs.album).className = 'album-img animate';
     },
     album: function () {
     }
