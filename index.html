@@ -5,79 +5,7 @@
 	<title>db.fm</title>
     <link rel="shortcut icon" type="image/x-icon" href="fm.ico"/>
     <link rel="stylesheet" href="bootstrap-3.3.4/css/bootstrap.min.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            transition: background-color 1s;
-        }
-        
-        .login-form {
-            width: 50%;
-            margin: 0 auto;
-        }
-        button {
-            margin: 0 5px;
-        }
-        .player {
-            position: relative;
-            width: 600px;
-            /*overflow: hidden;*/
-        }
-        .player .album-img {
-            position: absolute;
-            top: 0;
-            left: 0;
-            border-radius: 50%;
-            box-shadow: 0 0 10px blue;
-        }
-                /* Chrome, Safari, Opera */
-        @-webkit-keyframes rotation {
-            0%   {transform: rotate(0deg);}
-            100% {transform: rotate(360deg);}
-        }
-        @keyframes rotation {
-            0%   {transform: rotate(0deg);}
-            100% {transform: rotate(360deg);}
-        }
-
-        .album-img.animate {
-            /*transform: rotate(30deg);*/
-            -webkit-animation: rotation 30s linear infinite;
-        }
-
-        .player .wrapper {
-            position: absolute;
-            top: 0;
-            left: 300px;
-        }
-        .player .wrapper, .album-img {
-            width: 300px;
-            height: 300px;
-        }
-        .glyphicon {
-            font-size: 25px;
-        }
-        .glyphicon:hover {
-            cursor: pointer;
-        }
-        .glyphicon-heart {
-            color: red;
-        }
-        .controller span {
-            margin: 5px;
-        }
-        .wrap {
-            position: absolute;
-            width: 100%;
-            bottom: 10px;
-            left: 0;
-        }
-
-        h2 a:link, h2 a:hover {
-            text-decoration: none;
-        }
-    </style>
+    <link rel="stylesheet" href="dist/main.css"/>
 </head>
 <body>
     <main id="main"></main>
@@ -86,13 +14,7 @@
 	<script src="lib/react.js"></script>
 	<script src="lib/JSXTransformer.js"></script>
 
-    <script src="src/LoginForm.jsx" type="text/jsx"></script>
-    <script src="src/Player.jsx" type="text/jsx"></script>
-    <script src="src/App.jsx" type="text/jsx"></script>
-
-    <script type="text/jsx">
-        React.render(<App title={"豆瓣电台"} />, document.getElementById('main'));
-    </script>
+    <script src="dist/app.js" type="text/javascript"></script>
 
     <script>
 		document.addEventListener("keyup",function(e) {

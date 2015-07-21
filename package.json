@@ -7,7 +7,8 @@
   },
   "dependencies": {
     "async": "*",
-    "lodash": "^3.7.0"
+    "lodash": "^3.7.0",
+    "react": "^0.13.3"
   },
   "readmeFilename": "README.md",
   "description": "a simple douban FM",
@@ -15,7 +16,16 @@
   "webkit": {
     "plugin": true
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "autoprefixer-loader": "^2.0.0",
+    "babel-loader": "^5.1.4",
+    "css-loader": "^0.15.1",
+    "jsx-loader": "^0.13.2",
+    "markdown": "^0.5.0",
+    "sass-loader": "^1.0.2",
+    "sprintf-js": "^1.0.2",
+    "style-loader": "^0.12.3"
+  },
   "keywords": [
     "douban.fm"
   ],

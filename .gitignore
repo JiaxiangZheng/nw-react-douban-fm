@@ -1,2 +1,8 @@
+dist/
 node_modules/
-test/
+*.swp
+/test/
+.DS_Store
+.idea/
+tmp/
+.sass-cache/
