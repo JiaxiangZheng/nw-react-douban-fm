@@ -248,3 +248,5 @@ var Player = React.createClass({
     album: function () {
     }
 });
+
+module.exports = Player;

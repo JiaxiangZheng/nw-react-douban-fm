@@ -1,6 +1,8 @@
 'use strict';
 
+import React from 'react'
 import Player from './components/Player';
+import LoginForm from './components/LoginForm';
 
 var App = React.createClass({
     getInitialState: function () {

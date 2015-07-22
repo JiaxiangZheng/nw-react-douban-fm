@@ -30,10 +30,11 @@ var LoginForm = React.createClass({
 });
 
 var LoadingPage = React.createClass({
-
     render: function () {
         return (
             <div className="loading"></div>
         );
     }
 });
+
+module.exports = LoginForm;
